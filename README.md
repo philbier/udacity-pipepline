@@ -59,4 +59,4 @@ Schema: Enter dev. This is the Redshift database you want to connect to.
 Once you've entered these values, select *Save*.
 
 ## How to start
-Run /opt/airflow.start.sh to start the Airflow server. Access the Airflow UI by clicking Access Airflow button. Note that Airflow can take up to 10 minutes to create the connection due to the size of the files in S3.
+Run `/opt/airflow.start.sh` to start the Airflow server. Access the Airflow UI by clicking Access Airflow button. Note that Airflow can take up to 10 minutes to create the connection due to the size of the files in S3.
