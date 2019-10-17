@@ -10,13 +10,18 @@ from helpers import SqlQueries
 # AWS_SECRET = os.environ.get('AWS_SECRET')
 
 default_args = {
-    'owner': 'udacity',
-    'start_date': datetime.now()
+    'owner': 'phil',
+    'depends_on_past': False,
+    'start_date': datetime.now(),
+    #'retries': 0,
+    #'retry_delay': timedelta(minutes=1),
+    'catchup_by_default ': False
 }
 
 dag = DAG('udac_example_dag',
           default_args=default_args,
-          description='Load and transform data in Redshift with Airflow'
+          description='Load and transform data in Redshift with Airflow',
+          schedule_interval="@hourly"
         )
 
 start_operator = DummyOperator(task_id='Begin_execution',  dag=dag)
@@ -57,7 +62,8 @@ load_user_dimension_table = LoadDimensionOperator(
     dag=dag,
     table='users',
     redshift_conn_id='redshift',
-    sql=SqlQueries.user_table_insert
+    sql=SqlQueries.user_table_insert,
+    append_data=False
 )
 
 load_song_dimension_table = LoadDimensionOperator(
@@ -88,7 +94,9 @@ run_quality_checks = DataQualityOperator(
     task_id='Run_data_quality_checks',
     dag=dag,
     redshift_conn_id='redshift',
-    tables=['songplays', 'artists', 'songs', 'times', 'users']
+    table="songplays",
+    check_sql="SELECT count(*) FROM {}", 
+    expected_result=100
 )
 
 end_operator = DummyOperator(task_id='Stop_execution',  dag=dag)
